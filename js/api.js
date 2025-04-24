@@ -1,5 +1,5 @@
 const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-url.onrender.com/api' // Replace with your Render.com URL
+  ? 'https://mlms-backend.onrender.com/api' // Replace with your actual Render.com URL
   : 'http://localhost:5000/api';
 
 const api = {
