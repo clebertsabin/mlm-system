@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Help - MLMS</title>
+  <link rel="stylesheet" href="MLMSCSS.css">
+
+</head>
+
+<body>
+  <header>
+    <h1>
+      <div>Help - How the Web Works?</div>
+    </h1>
+    <div class="hamburger-container">
+
+      <button id="menu-btn" class="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <div class="profile">
+    <img src="path/to/profile.jpg" alt="User Profile Picture" />
+    <h3>John Doe</h3>
+  </div>
+  <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+  <a href="privacy setting.html"><i class="fas fa-lock"></i> Privacy & Settings</a>
+  <a href="help.html"><i class="fas fa-question-circle"></i> Help</a>
+  <a href="loginmlms.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+    
+
+    <!-- Overlay -->
+    <div id="overlay" class="overlay hidden"></div>
+    <script>
+      const menuBtn = document.getElementById('menu-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+
+      menuBtn.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      });
+    </script>
+
+
+  </header>
+
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="leave page.html">Leave Requests</a>
+    <a href="mission page.html">Mission Requests</a>
+    <a href="request page.html">My Requests</a>
+  </nav>
+  <div class="container">
+    <div class="section">
+      <h2 class="HeadH">Mission Requests</h2>
+      <p>The "Mission Requests" feature allows users to request missions for business, travel, or field activities.
+        Here’s how it works:</p>
+      <ul>
+        <li>Enter the <b>Mission Title</b> that describes your mission.</li>
+        <li>Select the <b>Location</b> from a dropdown list. If the location is outside Rwanda, you can enter a custom
+          location.</li>
+        <li>Choose the <b> Date</b> and <b>End Date</b> of your mission.</li>
+        <li>Provide a brief <b>Purpose</b> of the mission.</li>
+        <li>Once you submit, your mission request will be listed under "Previous Mission Requests" with details such as
+          mission title, location, start/end dates, and approval status.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="HeadH">Profile Management</h2>
+      <p>Your profile contains your personal information and allows you to manage various aspects like privacy and
+        contact preferences.</p>
+      <ul>
+        <li><b>Profile Visibility</b>: Set your profile to be visible to everyone, only friends, or set it as private.
+        </li>
+        <li><b>Contact Preferences</b>: Decide who can contact you: Everyone, Friends, or No One.</li>
+        <li><b>Notifications</b>: Choose how you would like to receive notifications, either via <b>email</b> or
+          <b>SMS</b>.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="HeadH">Privacy Settings</h2>
+      <p>In this section, you can manage your privacy settings, including who can see your profile and how you can be
+        contacted. You can:</p>
+      <ul>
+        <li>Choose to make your profile <b>Public, Private,</b> or visible to <b>Friends Only</b>.</li>
+        <li>Set who can ontact you: <b>Everyone, Friends Only, or No One</b>.</li>
+        <li>Control <b>notifications</b> for events such as mission requests and profile changes.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="HeadH">Dark Mode & Light Mode</h2>
+      <p>The web application supports both <b>Dark Mode</b> and <b>Light Mode</b> for a better user experience. You can
+        toggle between these two themes by clicking the "Toggle Dark/Light Mode" button found in the <b>Settings</b>
+        section.</p>
+      <ul>
+        <li><b>Light Mode</b>: Default theme with light background and dark text.</li>
+        <li><b>Dark Mode</b>: A theme with a dark background and light text, ideal for low-light environments.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="HeadH">Changing Settings</h2>
+      <p>To update your settings, go to the <b>Settings</b> page where you can change:</p>
+      <ul>
+        <li>Your <b>Language</b> preference (English, French, Kinyarwanda).</li>
+        <li>Your <b>Password</b> for account security.</li>
+        <li>Your <b>Notification Preferences</b>, including email and SMS alerts.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="HeadH">FAQ</h2>
+      <p>If you have any additional questions or need further assistance, feel free to contact our support team or
+        consult our frequently asked questions (FAQ) section.</p>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Mission & Leave Management System
+  </footer>
+</body>
+
+</html>

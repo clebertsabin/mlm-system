@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - MLMS</title>
+  <link rel="stylesheet" href="loginsignup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="signup-box">
+    <form id="signupForm" onsubmit="signup(event)" class="form1">
+      <h2>Create Account</h2>
+      <div class="form-group">
+        <input type="text" id="fullName" required placeholder="Full Name" pattern="[A-Za-z\s]+" title="Please enter a valid name">
+        <i class="fas fa-user"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="email" id="email" required placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+        <i class="fas fa-envelope"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="password" id="password" required placeholder="Password" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters">
+        <i class="fas fa-lock"></i>
+      </div>
+
+      <div class="form-group">
+        <input type="password" id="confirmPassword" required placeholder="Confirm Password">
+        <i class="fas fa-lock"></i>
+      </div>
+
+      <div class="form-group">
+        <select id="role" required>
+          <option value="">-- Select Role --</option>
+          <option value="employee">Employee</option>
+          <option value="admin">Administrator</option>
+          <option value="hod">Head of Department</option>
+          <option value="finance">Financial Manager</option>
+        </select>
+        <i class="fas fa-user-tag"></i>
+      </div>
+
+      <!-- Campus Dropdown -->
+      <div class="form-group">
+        <select id="campus" required>
+          <option value="">-- Choose Campus --</option>
+        </select>
+        <i class="fas fa-building"></i>
+      </div>
+
+      <!-- College Dropdown -->
+      <div class="form-group">
+        <select id="college" required>
+          <option value="">-- Choose College --</option>
+        </select>
+        <i class="fas fa-university"></i>
+      </div>
+
+      <!-- School Dropdown -->
+      <div class="form-group">
+        <select id="school" required>
+          <option value="">-- Choose School --</option>
+        </select>
+        <i class="fas fa-school"></i>
+      </div>
+
+      <!-- Department Dropdown -->
+      <div class="form-group">
+        <select id="department" required>
+          <option value="">-- Choose Department --</option>
+        </select>
+        <i class="fas fa-sitemap"></i>
+      </div>
+
+      <div id="error-message" class="error-message"></div>
+
+      <button type="submit">Sign Up</button>
+      <div class="link">
+        <p>Already have an account? <a href="loginmlms.html" style="text-decoration: #005fa3;">Login</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Sample JSON Data
+    const data = {
+      Huye: {
+        "College of Science": {
+          "School of Engineering": ["Mechanical", "Electrical"],
+          "School of Physics": ["Astrophysics", "Nuclear Physics"]
+        },
+        "College of Arts": {
+          "School of Literature": ["English", "French"]
+        }
+      },
+      Nyagatare: {
+        "College of Agriculture": {
+          "School of Farming": ["Crop Science", "Animal Science"]
+        }
+      },
+      Musanze: {
+        "College of Environment": {
+          "School of Conservation": ["Wildlife", "Forestry"]
+        }
+      }
+    };
+
+    const campusSelect = document.getElementById("campus");
+    const collegeSelect = document.getElementById("college");
+    const schoolSelect = document.getElementById("school");
+    const departmentSelect = document.getElementById("department");
+    const errorMessage = document.getElementById("error-message");
+
+    // Populate campuses
+    window.onload = () => {
+      Object.keys(data).forEach(campus => {
+        campusSelect.innerHTML += `<option value="${campus}">${campus}</option>`;
+      });
+    };
+
+    campusSelect.addEventListener("change", () => {
+      collegeSelect.innerHTML = `<option value="">-- Choose College --</option>`;
+      schoolSelect.innerHTML = `<option value="">-- Choose School --</option>`;
+      departmentSelect.innerHTML = `<option value="">-- Choose Department --</option>`;
+
+      const selectedCampus = data[campusSelect.value];
+      if (selectedCampus) {
+        Object.keys(selectedCampus).forEach(college => {
+          collegeSelect.innerHTML += `<option value="${college}">${college}</option>`;
+        });
+      }
+    });
+
+    collegeSelect.addEventListener("change", () => {
+      schoolSelect.innerHTML = `<option value="">-- Choose School --</option>`;
+      departmentSelect.innerHTML = `<option value="">-- Choose Department --</option>`;
+
+      const selectedCollege = data[campusSelect.value]?.[collegeSelect.value];
+      if (selectedCollege) {
+        Object.keys(selectedCollege).forEach(school => {
+          schoolSelect.innerHTML += `<option value="${school}">${school}</option>`;
+        });
+      }
+    });
+
+    schoolSelect.addEventListener("change", () => {
+      departmentSelect.innerHTML = `<option value="">-- Choose Department --</option>`;
+      const departments = data[campusSelect.value]?.[collegeSelect.value]?.[schoolSelect.value];
+      if (departments) {
+        departments.forEach(dep => {
+          departmentSelect.innerHTML += `<option value="${dep}">${dep}</option>`;
+        });
+      }
+    });
+
+    // Password validation
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+
+    confirmPassword.addEventListener("input", () => {
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setCustomValidity("Passwords don't match");
+      } else {
+        confirmPassword.setCustomValidity("");
+      }
+    });
+
+    async function signup(e) {
+      e.preventDefault();
+      errorMessage.textContent = "";
+
+      // Validate form
+      if (!document.getElementById("signupForm").checkValidity()) {
+        return;
+      }
+
+      // Collect form data
+      const formData = {
+        fullName: document.getElementById("fullName").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        role: document.getElementById("role").value,
+        campus: document.getElementById("campus").value,
+        college: document.getElementById("college").value,
+        school: document.getElementById("school").value,
+        department: document.getElementById("department").value
+      };
+
+      try {
+        // Call the API
+        const response = await api.auth.register(formData);
+        alert("Sign-up successful! Please check your email for verification.");
+        window.location.href = "loginmlms.html";
+      } catch (error) {
+        errorMessage.textContent = error.message || "An error occurred during signup. Please try again.";
+        console.error("Signup error:", error);
+      }
+    }
+  </script>
+</body>
+
+</html>
