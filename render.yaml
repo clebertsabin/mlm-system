@@ -2,9 +2,28 @@ services:
   - type: web
     name: mlms-frontend
     env: static
-    buildCommand: npm run build
-    staticPublishPath: .
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./
     routes:
       - type: rewrite
         source: /*
-        destination: /index.html 
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: mlms-backend
+          type: web
+          property: url
+
+  - type: web
+    name: mlms-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 8080 

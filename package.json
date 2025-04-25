@@ -1,12 +1,15 @@
 {
   "name": "mlms",
   "version": "1.0.0",
-  "description": "MLMS - Management Learning Management System",
-  "main": "index.js",
+  "description": "MLMS - Leave Management System",
   "scripts": {
-    "dev": "live-server",
-    "build": "echo 'No build step required for static site'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cd backend && npm start",
+    "build": "npm run build:frontend",
+    "build:frontend": "npm run create-dist && npm run copy-static && npm run optimize",
+    "create-dist": "if not exist dist mkdir dist",
+    "copy-static": "copy *.html dist\\ && copy *.css dist\\ && xcopy /E /I js dist\\js && copy *.png dist\\",
+    "optimize": "npm install -g html-minifier terser clean-css-cli && for %f in (dist\\*.html) do html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o \"%f\" \"%f\"",
+    "dev": "cd backend && npm run dev"
   },
   "keywords": [
     "mlms",
@@ -17,6 +20,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "live-server": "^1.2.2"
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "serve-static": "^1.15.0"
   }
 } 
