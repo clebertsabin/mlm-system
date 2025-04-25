@@ -1,0 +1,11 @@
+{
+  "name": "mlms-frontend",
+  "version": "1.0.0",
+  "description": "MLMS Frontend",
+  "scripts": {
+    "start": "serve -s ."
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+} 
