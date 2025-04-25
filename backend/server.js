@@ -11,9 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'https://your-github-username.github.io' // Replace with your GitHub Pages URL
-    : 'http://localhost:5000',
+  origin: ['http://localhost:8080', 'https://mlms-frontend.onrender.com'],
   credentials: true
 }));
 app.use(express.json());
