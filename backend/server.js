@@ -11,11 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:8080',
-    'http://localhost:5000',
-    'https://mlms-frontend.onrender.com'
-  ],
+  origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
   credentials: true
 }));
 app.use(express.json());
