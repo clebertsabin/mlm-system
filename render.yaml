@@ -11,6 +11,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+    buildFilter:
+      paths:
+      - package.json
+      - package-lock.json
+      - "**/*.js"
+      - "**/*.html"
+      - "**/*.css"
 
   - type: web
     name: mlms-backend
@@ -27,4 +34,9 @@ services:
       - key: PORT
         value: 8080
       - key: CORS_ORIGIN
-        value: https://mlms-frontend.onrender.com 
+        value: https://mlms-frontend.onrender.com
+    buildFilter:
+      paths:
+      - backend/package.json
+      - backend/package-lock.json
+      - "backend/**/*.js" 
