@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Campus Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f7fa;
+        }
+
+        header {
+            background-color: #2c3e50;
+            padding: 1rem;
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-around;
+            background-color: #34495e;
+            padding: 0.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-tabs {
+            display: flex;
+            justify-content: center;
+            background: #e0e0e0;
+            padding: 10px;
+        }
+
+        .admin-tabs button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .admin-tabs button.admin-active {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .admin-content {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .admin-actions button {
+            margin-right: 5px;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .admin-approve {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .admin-deny {
+            background: #f44336;
+            color: white;
+        }
+
+        .admin-sign {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .admin-forward {
+            background: #9C27B0;
+            color: white;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            bottom: 0;
+            position: fixed;
+        }
+     
+    /* Sidebar styles */
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #34495e;
+      padding-top: 60px;
+      transition: left 0.3s;
+      z-index: 1001;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #ecf0f1;
+      padding: 1rem;
+      text-decoration: none;
+      text-align: left;
+    }
+
+    .sidebar a:hover {
+      background-color: #2c3e50;
+    }
+
+    .hamburger-container {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+    }
+
+    .hamburger-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hamburger-btn span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      margin: 5px;
+      background-color: #ecf0f1;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1000;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+    /* Profile section within the sidebar */
+    .sidebar .profile {
+      text-align: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #2c3e50;
+    }
+    
+    .sidebar .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+    }
+    
+    .sidebar .profile h3 {
+      color: #ecf0f1;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Campus Admin Dashboard</h1>
+
+
+        <div class="hamburger-container">
+            <button id="menu-btn" class="hamburger-btn">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          <!-- Sidebar -->
+          <div id="sidebar" class="sidebar">
+            <div class="profile">
+              <img src="path/to/profile.jpg" alt="User Profile Picture" />
+              <h3>John Doe</h3>
+            </div>
+            <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+            <a href="privacy setting.html"><i class="fas fa-lock"></i> Privacy & Settings</a>
+            <a href="help.html"><i class="fas fa-question-circle"></i> Help</a>
+            <a href="loginmlms.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+      
+          <!-- Overlay -->
+          <div id="overlay" class="overlay hidden"></div>
+          <script>
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+      
+            menuBtn.addEventListener('click', () => {
+              sidebar.classList.add('open');
+              overlay.classList.add('show');
+            });
+      
+            overlay.addEventListener('click', () => {
+              sidebar.classList.remove('open');
+              overlay.classList.remove('show');
+            });
+          </script>
+
+          
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="leave page.html">Leave Requests</a>
+            <a href="mission page.html">Mission Requests</a>
+            <a href="request page.html">My Requests</a>
+
+        </nav>
+      
+    </header>
+
+    <div class="admin-tabs">
+        <button class="admin-tab-btn admin-active" onclick="switchTab('mission')">Mission Requests</button>
+        <button class="admin-tab-btn" onclick="switchTab('leave')">Leave Requests</button>
+    </div>
+
+    <div class="admin-content">
+        <div id="mission" class="admin-tab-content">
+            <h2>Pending Mission Requests</h2>
+            <table>
+                <tr>
+                    <th>Employee</th>
+                    <th>Purpose</th>
+                    <th>Dates</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Conference in Nairobi</td>
+                    <td>May 1 - May 5</td>
+                    <td class="admin-actions">
+                        <button class="admin-approve">Approve</button>
+                        <button class="admin-deny">Deny</button>
+                        <button class="admin-sign">Sign</button>
+                        <button class="admin-forward">Forward</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="leave" class="admin-tab-content" style="display: none;">
+            <h2>Pending Leave Requests</h2>
+            <table>
+                <tr>
+                    <th>Employee</th>
+                    <th>Reason</th>
+                    <th>Dates</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td>Mary K.</td>
+                    <td>Medical Leave</td>
+                    <td>May 10 - May 15</td>
+                    <td class="admin-actions">
+                        <button class="admin-approve">Approve</button>
+                        <button class="admin-deny">Deny</button>
+                        <button class="admin-sign">Sign</button>
+                        <button class="admin-forward">Forward</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('admin-active'));
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.style.display = 'none');
+            document.querySelector(`.admin-tab-btn[onclick*='${tabName}']`).classList.add('admin-active');
+            document.getElementById(tabName).style.display = 'block';
+        }
+
+        document.querySelectorAll('.admin-approve').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = button.closest('tr');
+                const actions = row.querySelector('.admin-actions');
+
+                // Remove approve and deny buttons
+                actions.querySelectorAll('.admin-approve, .admin-deny').forEach(btn => btn.remove());
+
+                // Show sign and forward buttons
+                const signBtn = document.createElement('button');
+                signBtn.textContent = 'Sign';
+                signBtn.className = 'admin-sign';
+                actions.appendChild(signBtn);
+
+                const forwardBtn = document.createElement('button');
+                forwardBtn.textContent = 'Forward';
+                forwardBtn.className = 'admin-forward';
+                actions.appendChild(forwardBtn);
+            });
+        });
+
+        // Remove all sign/forward buttons from view initially
+        document.querySelectorAll('.admin-sign, .admin-forward').forEach(btn => btn.style.display = 'none');
+    </script>
+    <footer>
+        &copy; 2025 Mission & Leave Management System
+    </footer>
+</body>
+
+</html>

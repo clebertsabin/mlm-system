@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="MLMSCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Privacy & Settings - MLMS</title>
+  <style>
+
+  </style>
+
+</head>
+<body>
+  <header>
+    <h1>Privacy & Settings</h1>
+    <div class="hamburger-container">
+      <button id="menu-btn" class="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <div class="profile">
+    <img src="path/to/profile.jpg" alt="User Profile Picture" />
+    <h3>John Doe</h3>
+  </div>
+  <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+  <a href="privacy setting.html"><i class="fas fa-lock"></i> Privacy & Settings</a>
+  <a href="help.html"><i class="fas fa-question-circle"></i> Help</a>
+  <a href="loginmlms.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
+
+    
+    <!-- Overlay -->
+    <div id="overlay" class="overlay hidden"></div>
+        <script>
+          const menuBtn = document.getElementById('menu-btn');
+          const sidebar = document.getElementById('sidebar');
+          const overlay = document.getElementById('overlay');
+        
+          menuBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('show');
+          });
+        
+          overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+          });
+        </script>
+    
+  </header>
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="leave page.html">Leave Requests</a>
+    <a href="mission page.html">Mission Requests</a>
+    <a href="request page.html">My Requests</a>
+  </nav>
+  <div class="containerp">
+    <button class="toggle-theme-btn" onclick="toggleTheme()">Toggle Dark/Light Mode</button>
+    <h2>Privacy Settings</h2>
+    <form onsubmit="updatePrivacySettings(event)">
+      <div class="form-groupp">
+        <label for="profileVisibility">Profile Visibility</label>
+        <select id="profileVisibility" required>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+          <option value="friends">Friends Only</option>
+        </select>
+      </div>
+
+      <div class="form-groupp">
+        <label for="contactableBy">Who can contact me?</label>
+        <select id="contactableBy" required>
+          <option value="everyone">Everyone</option>
+          <option value="friends">Friends Only</option>
+          <option value="none">No One</option>
+        </select>
+      </div>
+
+      <h3>Notification Settings</h3>
+      <div class="form-groupp">
+        <label for="emailNotifications">Email Notifications</label>
+        <input type="checkbox" id="emailNotifications" checked /> Receive email notifications
+      </div>
+      <div class="form-groupp">
+        <label for="smsNotifications">SMS Notifications</label>
+        <input type="checkbox" id="smsNotifications" /> Receive SMS notifications
+      </div>
+
+      <h3>Account Security</h3>
+      <div class="form-groupp">
+        <label for="changePassword">Change Password</label>
+        <input type="password" id="changePassword" placeholder="New Password" />
+      </div>
+      <div class="form-groupp">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm New Password" />
+      </div>
+
+      <h3>General Settings</h3>
+      <div class="form-groupp">
+        <label for="language">Language</label>
+        <select id="language" required>
+          <option value="en">English</option>
+          <option value="fr">French</option>
+          <option value="rw">Kinyarwanda</option>
+        </select>
+      </div>
+
+      <button type="submit" class="savebutton">Save Settings</button>
+    </form>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    function updatePrivacySettings(e) {
+      e.preventDefault();
+      alert("Privacy and settings have been updated!");
+    }
+  </script>
+   <footer>
+    &copy; 2025 Mission & Leave Management System
+  </footer>
+</body>
+</html>

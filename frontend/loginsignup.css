@@ -1,0 +1,122 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Center content inside the login-box */
+.login-box {
+  background: #f1f1f1;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  height: auto; /* Adjust height as needed */
+  margin: auto; /* Center the login-box itself */
+}
+
+label {
+  width: 85%;
+}
+
+h2 {
+  text-align: center;
+  color: #0077cc;
+  margin-bottom: 1rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  align-items: center;
+
+}
+
+button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fa3;
+}
+
+.link {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.forgot {
+  display: block;
+  margin-top: 0.5rem;
+  text-align: right;
+  font-size: 0.9rem;
+  text-decoration: #005fa3;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%; /* Ensure input fields take full width */
+  margin-bottom: 1rem;
+}
+
+.input-wrapper .icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.6rem 0.6rem 0.6rem 2.5rem; /* Add padding for icons */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .form-group input,
+  .form-group select {
+    font-size: 14px;
+  }
+  
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .input-wrapper .icon {
+    font-size: 0.9rem;
+  }
+
+  .input-wrapper input {
+    padding: 0.6rem 0.6rem 0.6rem 2rem;
+  }
+}
+
+/* Font Awesome */

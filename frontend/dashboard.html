@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - MLMS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="MLMSCSS.css" />
+
+</head>
+
+<body>
+  <header>
+    <h1>Welcome back on your Dashboard</h1>
+    <div class="hamburger-container">
+      <button id="menu-btn" class="hamburger-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <div id="sidebar" class="sidebar">
+    <div class="profile">
+      <img src="path/to/profile.jpg" alt="User Profile Picture" />
+      <h3>John Doe</h3>
+    </div>
+    <a href="profile.html"><i class="fas fa-user"></i> My Profile</a>
+    <a href="privacy setting.html"><i class="fas fa-lock"></i> Privacy & Settings</a>
+    <a href="help.html"><i class="fas fa-question-circle"></i> Help</a>
+    <a href="loginmlms.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay" class="overlay"></div>
+
+  <nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="leave page.html">Leave Requests</a>
+    <a href="mission page.html">Mission Requests</a>
+    <a href="request page.html">My Requests</a>
+  </nav>
+  <div class="dashboard-cards">
+  <div class="container">
+  <div class="dashboard-cards">
+   <div class="card">
+      <i class="fas fa-calendar-check icon"></i>
+      <h3>Total Leaves Requested</h3>
+      <p>5</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-briefcase icon"></i>
+      <h3>Total Missions Requested</h3>
+      <p>3</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-thumbs-up icon"></i>
+      <h3>Approved Leaves</h3>
+      <p>4</p>
+    </div>
+    <div class="card">
+      <i class="fas fa-hourglass-half icon"></i>
+      <h3>Pending Missions</h3>
+      <p>1</p>
+    </div>
+  </div>
+</div>
+  </div>
+
+  <footer>
+    &copy; 2025 Mission & Leave Management System
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+  </script>
+</body>
+
+</html>
