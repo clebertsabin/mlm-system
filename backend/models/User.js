@@ -15,24 +15,29 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'hod', 'lecturer', 'finance', 'user'],
-    default: 'user'
+    enum: ['admin', 'lecturer', 'hod', 'campus_admin'],
+    required: true
   },
   firstName: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   lastName: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   department: {
     type: String,
-    required: true,
-    enum: ['Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Engineering', 'Business', 'Humanities']
+    required: function() {
+      return ['lecturer', 'hod'].includes(this.role);
+    },
+    trim: true
   },
   profilePicture: {
-    type: String
+    type: String,
+    default: ''
   },
   createdAt: {
     type: Date,

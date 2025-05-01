@@ -2,25 +2,15 @@ services:
   - type: web
     name: mlms-frontend
     env: node
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./frontend/dist
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
     envVars:
-      - key: API_URL
+      - key: REACT_APP_API_URL
         value: https://mlms-backend.onrender.com
-    buildFilter:
-      paths:
-        - frontend/
-        - package.json
-        - package-lock.json
-    routes:
-      - type: redirect
-        source: /
-        destination: /loginmlms.html
-        permanent: true
-      - type: redirect
-        source: /login
-        destination: /loginmlms.html
-        permanent: true
+      - key: REACT_APP_CORS_ORIGIN
+        value: https://mlms-frontend.onrender.com
+    healthCheckPath: /health
+    autoDeploy: true
 
   - type: web
     name: mlms-backend
@@ -28,72 +18,36 @@ services:
     buildCommand: cd backend && npm install
     startCommand: cd backend && npm start
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: MONGODB_URI
-        sync: false
-      - key: JWT_SECRET
-        sync: false
+        value: mongodb+srv://mlm_user:mlms-pass-123@mymlmproject.vfknhg6.mongodb.net/mlms?retryWrites=true&w=majority&appName=mymlmproject
       - key: PORT
         value: 3000
       - key: CORS_ORIGIN
         value: https://mlms-frontend.onrender.com
-      - key: UPLOAD_DIR
-        value: /tmp/uploads
-      - key: PDF_DIR
-        value: /tmp/pdfs
-      - key: MAX_FILE_SIZE
-        value: 5242880
-      - key: ALLOWED_FILE_TYPES
-        value: application/pdf,image/jpeg,image/png
-      - key: EMAIL_USER
-        sync: false
-      - key: EMAIL_PASSWORD
-        sync: false
-      - key: ADMIN_EMAIL
-        sync: false
-    buildFilter:
-      paths:
-        - backend/
-        - package.json
-        - package-lock.json
-    healthCheckPath: /health
-    healthCheckTimeout: 5s
-
-  - type: cron
-    name: mlms-cleanup
-    schedule: "0 0 * * *"
-    env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node scripts/cleanup.js
-    envVars:
-      - key: UPLOAD_DIR
-        value: /tmp/uploads
-      - key: PDF_DIR
-        value: /tmp/pdfs
-      - key: MAX_FILE_AGE
-        value: 86400
-
-  - type: cron
-    name: mlms-daily-report
-    schedule: "0 0 * * *"
-    env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node scripts/dailyReport.js
-    envVars:
-      - key: EMAIL_USER
-        sync: false
-      - key: EMAIL_PASSWORD
-        sync: false
-      - key: ADMIN_EMAIL
-        sync: false
-
-  - type: cron
-    name: mlms-verify
-    schedule: "*/5 * * * *"
-    env: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node scripts/verifyLoginPage.js
-    envVars:
+      - key: JWT_SECRET
+        value: your-jwt-secret-key
       - key: NODE_ENV
-        value: production 
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true
+
+cronJobs:
+  - name: daily-report
+    schedule: "0 0 * * *"
+    command: cd backend && node scripts/dailyReport.js
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://mlm_user:mlms-pass-123@mymlmproject.vfknhg6.mongodb.net/mlms?retryWrites=true&w=majority&appName=mymlmproject
+      - key: EMAIL_USER
+        value: your-email@example.com
+      - key: EMAIL_PASSWORD
+        value: your-email-password
+      - key: ADMIN_EMAIL
+        value: admin@example.com
+
+  - name: verify-login-page
+    schedule: "*/15 * * * *"
+    command: cd backend && node scripts/verifyLoginPage.js
+    envVars:
+      - key: FRONTEND_URL
+        value: https://mlms-frontend.onrender.com 

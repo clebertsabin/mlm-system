@@ -1,11 +1,56 @@
 {
   "name": "mlms-frontend",
   "version": "1.0.0",
+  "private": true,
   "description": "MLMS Frontend",
   "scripts": {
-    "start": "serve -s ."
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
-    "serve": "^14.2.1"
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2",
+    "axios": "^1.6.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.1",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^3.5.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "overrides": {
+    "react-scripts": {
+      "@babel/plugin-proposal-nullish-coalescing-operator": "^7.23.4",
+      "@babel/plugin-proposal-private-methods": "^7.23.4",
+      "@babel/plugin-proposal-numeric-separator": "^7.23.4",
+      "@babel/plugin-proposal-class-properties": "^7.23.4",
+      "@babel/plugin-proposal-optional-chaining": "^7.23.4",
+      "@babel/plugin-proposal-private-property-in-object": "^7.23.4",
+      "eslint": "^8.56.0",
+      "rimraf": "^5.0.5",
+      "glob": "^10.3.10",
+      "rollup-plugin-terser": "^8.0.2",
+      "svgo": "^3.2.0"
+    }
   }
 } 
