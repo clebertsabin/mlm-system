@@ -13,6 +13,7 @@ router.get('/', auth, async (req, res) => {
     const users = await User.find().select('-password');
     res.json(users);
   } catch (error) {
+    console.error('Error fetching users:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -26,6 +27,7 @@ router.get('/profile', auth, async (req, res) => {
     }
     res.json(user);
   } catch (error) {
+    console.error('Error fetching user profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -47,6 +49,7 @@ router.patch('/profile', auth, async (req, res) => {
     await user.save();
     res.json(user);
   } catch (error) {
+    console.error('Error updating user profile:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
