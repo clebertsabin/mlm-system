@@ -31,22 +31,45 @@ app.use(express.static(path.join(__dirname, 'public')));
 const connectDB = async () => {
   try {
     const mongoURI = process.env.MONGODB_URI;
+    
+    // Log environment variables (excluding sensitive data)
+    console.log('Environment variables loaded:');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('PORT:', process.env.PORT);
+    console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN);
+    console.log('MONGODB_URI present:', !!mongoURI);
+    
     if (!mongoURI) {
-      throw new Error('MONGODB_URI environment variable is not set');
+      console.error('MONGODB_URI is not set in environment variables');
+      console.error('Please set MONGODB_URI in your environment variables');
+      console.error('Example: mongodb+srv://username:password@cluster.mongodb.net/database');
+      return false;
     }
     
     if (!mongoURI.startsWith('mongodb://') && !mongoURI.startsWith('mongodb+srv://')) {
-      throw new Error('Invalid MongoDB URI format. Must start with mongodb:// or mongodb+srv://');
+      console.error('Invalid MongoDB URI format');
+      console.error('URI must start with mongodb:// or mongodb+srv://');
+      console.error('Current URI:', mongoURI.substring(0, 10) + '...');
+      return false;
     }
 
     await mongoose.connect(mongoURI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000
     });
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB successfully');
+    return true;
   } catch (err) {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
+    console.error('MongoDB connection error:', err.message);
+    if (err.name === 'MongoServerSelectionError') {
+      console.error('Could not connect to MongoDB server. Please check:');
+      console.error('1. The server is running and accessible');
+      console.error('2. The connection string is correct');
+      console.error('3. Network connectivity');
+    }
+    return false;
   }
 };
 
@@ -66,6 +89,10 @@ app.get('/health', (req, res) => {
     version: '1.1.0',
     services: {
       database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    },
+    environment: {
+      node_env: process.env.NODE_ENV,
+      port: process.env.PORT
     }
   };
   res.json(healthcheck);
@@ -119,8 +146,13 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-connectDB().then(() => {
+connectDB().then((connected) => {
+  if (!connected) {
+    console.warn('Starting server without database connection');
+  }
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log('Environment:', process.env.NODE_ENV || 'development');
+    console.log('CORS Origin:', process.env.CORS_ORIGIN || 'http://localhost:8080');
   });
 }); 
