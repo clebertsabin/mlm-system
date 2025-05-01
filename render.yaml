@@ -1,30 +1,23 @@
 services:
   - type: web
     name: mlms-frontend
-    env: static
-    buildCommand: cd frontend && npm install
-    staticPublishPath: ./frontend
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    env: node
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./frontend/dist
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: API_URL
         value: https://mlms-backend.onrender.com
     buildFilter:
       paths:
-      - frontend/**/*
-      - frontend/package.json
-    healthCheckPath: /index.html
+        - frontend/
+        - package.json
+        - package-lock.json
 
   - type: web
     name: mlms-backend
     env: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -33,7 +26,7 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: PORT
-        value: 8080
+        value: 3000
       - key: CORS_ORIGIN
         value: https://mlms-frontend.onrender.com
       - key: UPLOAD_DIR
@@ -43,7 +36,7 @@ services:
       - key: MAX_FILE_SIZE
         value: 5242880
       - key: ALLOWED_FILE_TYPES
-        value: "image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        value: application/pdf,image/jpeg,image/png
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASSWORD
@@ -52,26 +45,17 @@ services:
         sync: false
     buildFilter:
       paths:
-      - backend/package.json
-      - backend/package-lock.json
-      - "backend/**/*.js"
-      - backend/middleware/**
-      - backend/models/**
-      - backend/routes/**
-      - backend/utils/**
-    healthCheckPath: /health
-    healthCheckTimeout: 5s
+        - backend/
+        - package.json
+        - package-lock.json
 
   - type: cron
     name: mlms-cleanup
-    env: node
-    rootDir: backend
     schedule: "0 0 * * *"
-    buildCommand: npm install
-    startCommand: node scripts/cleanup.js
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node scripts/cleanup.js
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: UPLOAD_DIR
         value: /tmp/uploads
       - key: PDF_DIR
@@ -81,14 +65,11 @@ services:
 
   - type: cron
     name: mlms-daily-report
-    env: node
-    rootDir: backend
     schedule: "0 0 * * *"
-    buildCommand: npm install
-    startCommand: node scripts/dailyReport.js
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node scripts/dailyReport.js
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASSWORD
