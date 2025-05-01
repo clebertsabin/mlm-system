@@ -61,6 +61,37 @@ app.get('/health', (req, res) => {
   }
 });
 
+// Logs endpoint
+app.get('/logs', (req, res) => {
+    const { search, level } = req.query;
+    try {
+        let logs = [];
+        if (fs.existsSync('monitoring.log')) {
+            const logContent = fs.readFileSync('monitoring.log', 'utf8');
+            logs = logContent.split('\n')
+                .filter(line => line.trim())
+                .map(line => {
+                    const [timestamp, message] = line.split(' - ');
+                    return {
+                        timestamp: new Date(timestamp).getTime(),
+                        message: message.trim(),
+                        level: message.toLowerCase().includes('error') ? 'error' :
+                               message.toLowerCase().includes('warning') ? 'warning' : 'info'
+                    };
+                })
+                .filter(log => {
+                    if (level && level !== 'all' && log.level !== level) return false;
+                    if (search && !log.message.toLowerCase().includes(search.toLowerCase())) return false;
+                    return true;
+                });
+        }
+        res.json(logs);
+    } catch (error) {
+        console.error('Error reading logs:', error);
+        res.status(500).json({ message: 'Error reading logs' });
+    }
+});
+
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../')));
