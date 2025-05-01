@@ -51,7 +51,8 @@ app.get('/health', (req, res) => {
       database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
       uploads: fs.existsSync(process.env.UPLOAD_DIR || '/tmp/uploads') ? 'available' : 'unavailable',
       pdfs: fs.existsSync(process.env.PDF_DIR || '/tmp/pdfs') ? 'available' : 'unavailable'
-    }
+    },
+    metrics: metricsService.getMetrics()
   };
   try {
     res.send(healthcheck);
