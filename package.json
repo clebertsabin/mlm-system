@@ -1,7 +1,7 @@
 {
   "name": "mlms",
-  "version": "1.0.0",
-  "description": "MLMS - Leave Management System",
+  "version": "1.1.0",
+  "description": "MLMS - Leave and Mission Management System",
   "scripts": {
     "start": "cd backend && npm start",
     "build": "npm run build:frontend",
@@ -15,7 +15,10 @@
     "mlms",
     "management",
     "learning",
-    "system"
+    "system",
+    "leave",
+    "mission",
+    "document"
   ],
   "author": "",
   "license": "ISC",

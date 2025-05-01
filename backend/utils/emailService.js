@@ -2,16 +2,37 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
     constructor() {
-        this.transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
+        this.isConfigured = this.validateConfiguration();
+        if (this.isConfigured) {
+            this.transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASSWORD
+                }
+            });
+        } else {
+            console.warn('Email service is not configured. Please set EMAIL_USER, EMAIL_PASSWORD, and ADMIN_EMAIL environment variables.');
+        }
+    }
+
+    validateConfiguration() {
+        const requiredVars = ['EMAIL_USER', 'EMAIL_PASSWORD', 'ADMIN_EMAIL'];
+        const missingVars = requiredVars.filter(varName => !process.env[varName]);
+        
+        if (missingVars.length > 0) {
+            console.warn(`Missing email configuration: ${missingVars.join(', ')}`);
+            return false;
+        }
+        return true;
     }
 
     async sendAlert(subject, message) {
+        if (!this.isConfigured) {
+            console.warn('Cannot send alert: Email service not configured');
+            return;
+        }
+
         try {
             await this.transporter.sendMail({
                 from: process.env.EMAIL_USER,
@@ -31,6 +52,11 @@ class EmailService {
     }
 
     async sendDailyReport(metrics) {
+        if (!this.isConfigured) {
+            console.warn('Cannot send daily report: Email service not configured');
+            return;
+        }
+
         try {
             await this.transporter.sendMail({
                 from: process.env.EMAIL_USER,

@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <title>Leave Requests - MLMS</title>
   <link rel="stylesheet" href="MLMSCSS.css">
+  <link rel="stylesheet" href="css/notifications.css">
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
 
 <body>
@@ -61,62 +63,403 @@
   </nav>
 
   <div class="container">
-    <form onsubmit="submitLeave(event)">
-      <h2 style="text-align: left;">Request a Leave</h2>
-      <label for="type">Leave Type</label>
-      <select id="type" required>
-        <option value="Annual">Annual</option>
-        <option value="Sick">Sick</option>
-        <option value="Maternity">Maternity</option>
-        <option value="Casual">Casual</option>
-      </select>
-      <label for="start">Start Date</label>
-      <input type="date" id="start" required />
-      <label for="end">End Date</label>
-      <input type="date" id="end" required />
-      <label for="invitation">Upload Invitation (if applicable)</label>
-      <input type="file" id="invitation" name="invitation" optional />
-      <label for="reason">Reason</label>
-      <textarea id="reason" rows="4" required></textarea>
-      <button type="submit">Submit Leave Request</button>
-    </form>
+    <!-- Leave Request Form (for lecturers) -->
+    <div id="requestForm" style="display: none;">
+      <h2 class="RHead1">Request Leave</h2>
+      <form id="leaveRequestForm">
+        <div class="form-group">
+          <label for="leaveType">Leave Type</label>
+          <select id="leaveType" required>
+            <option value="annual">Annual Leave</option>
+            <option value="sick">Sick Leave</option>
+            <option value="maternity">Maternity Leave</option>
+            <option value="casual">Casual Leave</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="leaveStart">Start Date</label>
+          <input type="date" id="leaveStart" required>
+        </div>
+        <div class="form-group">
+          <label for="leaveEnd">End Date</label>
+          <input type="date" id="leaveEnd" required>
+        </div>
+        <div class="form-group">
+          <label for="leaveReason">Reason</label>
+          <textarea id="leaveReason" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="leaveDocument">Supporting Document (if any)</label>
+          <input type="file" id="leaveDocument" accept=".pdf,.doc,.docx">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Submit Leave Request</button>
+        </div>
+      </form>
+    </div>
 
-    <h2>Previous Leave Requests</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Annual</td>
-          <td>2025-03-10</td>
-          <td>2025-03-15</td>
-          <td>Approved</td>
-        </tr>
-        <tr>
-          <td>Sick</td>
-          <td>2025-04-01</td>
-          <td>2025-04-03</td>
-          <td>Pending</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Leave Requests Table (for admins) -->
+    <div id="adminContent" style="display: none;">
+      <h2 class="RHead1">Leave Requests</h2>
+      <div class="admin-tabs">
+        <button class="admin-active" onclick="showTab('pending')">Pending</button>
+        <button onclick="showTab('approved')">Approved</button>
+        <button onclick="showTab('rejected')">Rejected</button>
+      </div>
+      <div class="admin-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leaveTableBody">
+            <!-- Leave requests will be loaded dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- My Leave Requests (for lecturers) -->
+    <div id="myRequests" style="display: none;">
+      <h2 class="RHead1">My Leave Requests</h2>
+      <div class="request-tabs">
+        <button class="request-active" onclick="showMyRequests('all')">All</button>
+        <button onclick="showMyRequests('pending')">Pending</button>
+        <button onclick="showMyRequests('approved')">Approved</button>
+        <button onclick="showMyRequests('rejected')">Rejected</button>
+      </div>
+      <div class="request-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="myRequestsTableBody">
+            <!-- My requests will be loaded dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <script>
-    function submitLeave(e) {
-      e.preventDefault();
-      alert("Leave request submitted successfully!");
-    }
-  </script>
+  <!-- Approval Modal -->
+  <div id="approvalModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Approve Leave Request</h2>
+      <form id="approvalForm">
+        <input type="hidden" id="requestId">
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" required>
+            <option value="approved">Approve</option>
+            <option value="rejected">Reject</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="comment">Comment</label>
+          <textarea id="comment" rows="3"></textarea>
+        </div>
+        <div id="assignSection" class="form-group" style="display: none;">
+          <label for="assignedTo">Assign To Lecturer</label>
+          <select id="assignedTo">
+            <option value="">Select Lecturer</option>
+          </select>
+        </div>
+        <div id="signatureSection" class="form-group" style="display: none;">
+          <label>Signature</label>
+          <div class="signature-pad-container">
+            <canvas id="signaturePad" class="signature-pad"></canvas>
+            <button type="button" id="clearSignature" class="btn-secondary">Clear Signature</button>
+          </div>
+        </div>
+        <div id="stampSection" class="form-group" style="display: none;">
+          <label for="stamp">Stamp</label>
+          <input type="file" id="stamp" accept="image/*">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Submit Approval</button>
+          <button type="button" class="btn-secondary" id="cancelApproval">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer>
     &copy; 2025 Mission & Leave Management System
   </footer>
+
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Initialize signature pad
+    let signaturePad = null;
+    let currentRequestId = null;
+    let currentUser = null;
+    let lecturers = [];
+    let currentTab = 'pending';
+    let currentMyRequestsTab = 'all';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check authentication
+      utils.requireAuth();
+      currentUser = utils.getCurrentUser();
+      
+      // Setup signature pad
+      signaturePad = utils.setupSignaturePad('signaturePad');
+      
+      // Show appropriate content based on role
+      if (currentUser.role === 'lecturer') {
+        document.getElementById('requestForm').style.display = 'block';
+        document.getElementById('myRequests').style.display = 'block';
+        await loadMyRequests();
+      } else {
+        document.getElementById('adminContent').style.display = 'block';
+        if (currentUser.role === 'hod') {
+          await loadLecturers();
+        }
+        await loadRequests();
+      }
+      
+      // Setup event listeners
+      setupEventListeners();
+    });
+
+    async function loadLecturers() {
+      try {
+        lecturers = await api.lecturers.getLecturers();
+        const select = document.getElementById('assignedTo');
+        lecturers.forEach(lecturer => {
+          const option = document.createElement('option');
+          option.value = lecturer._id;
+          option.textContent = lecturer.name;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        utils.showNotification(error.message, 'error');
+      }
+    }
+
+    async function loadRequests() {
+      try {
+        const requests = await api.leave.getPendingRequests();
+        const tbody = document.getElementById('leaveTableBody');
+        tbody.innerHTML = '';
+
+        requests.forEach(request => {
+          if (request.type === 'leave' && request.status === currentTab) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${request.employeeName}</td>
+              <td>${utils.formatDate(request.startDate)}</td>
+              <td>${utils.formatDate(request.endDate)}</td>
+              <td>${request.reason}</td>
+              <td><span class="badge ${utils.getStatusClass(request.status)}">${utils.getStatusText(request.status)}</span></td>
+              <td>
+                ${currentUser.role !== 'lecturer' ? `
+                  <button class="btn-primary" onclick="showApprovalModal('${request._id}')">Approve</button>
+                ` : `
+                  <button class="btn-primary" onclick="viewDocument('${request._id}')">View Document</button>
+                `}
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+        });
+      } catch (error) {
+        utils.showNotification(error.message, 'error');
+      }
+    }
+
+    async function loadMyRequests() {
+      try {
+        const requests = await api.leave.getMyRequests();
+        const tbody = document.getElementById('myRequestsTableBody');
+        tbody.innerHTML = '';
+
+        requests.forEach(request => {
+          if (request.type === 'leave' && (currentMyRequestsTab === 'all' || request.status === currentMyRequestsTab)) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${request.leaveType}</td>
+              <td>${utils.formatDate(request.startDate)}</td>
+              <td>${utils.formatDate(request.endDate)}</td>
+              <td>${request.reason}</td>
+              <td><span class="badge ${utils.getStatusClass(request.status)}">${utils.getStatusText(request.status)}</span></td>
+              <td>
+                <button class="btn-primary" onclick="viewDocument('${request._id}')">
+                  ${request.status === 'approved' ? 'Download PDF' : 'View Details'}
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+        });
+      } catch (error) {
+        utils.showNotification(error.message, 'error');
+      }
+    }
+
+    function setupEventListeners() {
+      // Leave request form
+      document.getElementById('leaveRequestForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await submitRequest();
+      });
+
+      // Modal close button
+      document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('approvalModal').style.display = 'none';
+      });
+
+      // Cancel button
+      document.getElementById('cancelApproval').addEventListener('click', () => {
+        document.getElementById('approvalModal').style.display = 'none';
+      });
+
+      // Clear signature button
+      document.getElementById('clearSignature').addEventListener('click', () => {
+        utils.clearSignature(signaturePad);
+      });
+
+      // Approval form submission
+      document.getElementById('approvalForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        try {
+          const status = document.getElementById('status').value;
+          const comment = document.getElementById('comment').value;
+          const assignedTo = document.getElementById('assignedTo').value;
+          
+          let signature = null;
+          let stamp = null;
+
+          // Get signature and stamp for campus admin
+          if (currentUser.role === 'admin') {
+            signature = utils.getSignatureData(signaturePad);
+            if (!signature) {
+              throw new Error('Please provide a signature');
+            }
+            stamp = await utils.handleStampUpload(document.getElementById('stamp'));
+            if (!stamp) {
+              throw new Error('Please provide a stamp');
+            }
+          }
+
+          await api.leave.approveRequest(currentRequestId, status, comment, signature, stamp, assignedTo);
+          utils.showNotification('Request approved successfully', 'success');
+          document.getElementById('approvalModal').style.display = 'none';
+          await loadRequests();
+        } catch (error) {
+          utils.showNotification(error.message, 'error');
+        }
+      });
+
+      // Tab buttons
+      document.querySelectorAll('.admin-tabs button').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.admin-tabs button').forEach(btn => {
+            btn.classList.remove('admin-active');
+          });
+          button.classList.add('admin-active');
+          currentTab = button.textContent.toLowerCase();
+          loadRequests();
+        });
+      });
+
+      // My requests tab buttons
+      document.querySelectorAll('#myRequests .request-tabs button').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('#myRequests .request-tabs button').forEach(btn => {
+            btn.classList.remove('request-active');
+          });
+          button.classList.add('request-active');
+          currentMyRequestsTab = button.textContent.toLowerCase();
+          loadMyRequests();
+        });
+      });
+    }
+
+    async function submitRequest() {
+      try {
+        const form = document.getElementById('leaveRequestForm');
+        const formData = new FormData(form);
+        
+        const requestData = {
+          type: 'leave',
+          leaveType: formData.get('leaveType'),
+          startDate: formData.get('leaveStart'),
+          endDate: formData.get('leaveEnd'),
+          reason: formData.get('leaveReason')
+        };
+
+        // Handle document upload if present
+        const documentInput = document.getElementById('leaveDocument');
+        if (documentInput.files.length > 0) {
+          requestData.document = await utils.handleFileUpload(documentInput);
+        }
+
+        await api.leave.createRequest(requestData);
+        utils.showNotification('Leave request submitted successfully', 'success');
+        form.reset();
+        await loadMyRequests();
+      } catch (error) {
+        utils.showNotification(error.message, 'error');
+      }
+    }
+
+    function showApprovalModal(requestId) {
+      currentRequestId = requestId;
+      document.getElementById('approvalModal').style.display = 'block';
+      
+      // Show/hide sections based on role
+      const isCampusAdmin = currentUser.role === 'admin';
+      const isHOD = currentUser.role === 'hod';
+      
+      // Show signature and stamp for campus admin
+      document.getElementById('signatureSection').style.display = isCampusAdmin ? 'block' : 'none';
+      document.getElementById('stampSection').style.display = isCampusAdmin ? 'block' : 'none';
+      
+      // Show assignment for HOD
+      document.getElementById('assignSection').style.display = isHOD ? 'block' : 'none';
+      
+      // Update required attributes
+      document.getElementById('stamp').required = isCampusAdmin;
+      
+      utils.clearSignature(signaturePad);
+      document.getElementById('approvalForm').reset();
+    }
+
+    async function viewDocument(requestId) {
+      try {
+        await api.leave.downloadPDF(requestId);
+      } catch (error) {
+        utils.showNotification(error.message, 'error');
+      }
+    }
+
+    function showTab(tab) {
+      currentTab = tab;
+      loadRequests();
+    }
+
+    function showMyRequests(tab) {
+      currentMyRequestsTab = tab;
+      loadMyRequests();
+    }
+  </script>
 </body>
 
 </html>

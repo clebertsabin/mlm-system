@@ -45,11 +45,11 @@ services:
       - key: ALLOWED_FILE_TYPES
         value: "image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       - key: EMAIL_USER
-        value: clebertsabin@gmail.com
+        sync: false
       - key: EMAIL_PASSWORD
         sync: false
       - key: ADMIN_EMAIL
-        value: clebertsabin@gmail.com
+        sync: false
     buildFilter:
       paths:
       - backend/package.json
@@ -90,8 +90,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: EMAIL_USER
-        value: clebertsabin@gmail.com
+        sync: false
       - key: EMAIL_PASSWORD
         sync: false
       - key: ADMIN_EMAIL
-        value: clebertsabin@gmail.com 
+        sync: false 

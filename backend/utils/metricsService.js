@@ -9,7 +9,8 @@ class MetricsService {
             totalRequests: 0,
             errorCount: 0,
             recentIssues: [],
-            lastAlertTime: 0
+            lastAlertTime: 0,
+            emailAlertsEnabled: false
         };
         this.metricsFile = path.join(process.env.UPLOAD_DIR || '/tmp/uploads', 'metrics.json');
         this.loadMetrics();
@@ -49,10 +50,13 @@ class MetricsService {
         }
         this.saveMetrics();
 
-        // Send alert if enough time has passed since last alert
+        // Send alert if enough time has passed since last alert and email is configured
         const now = Date.now();
-        if (now - this.metrics.lastAlertTime > 3600000) { // 1 hour
-            emailService.sendAlert('System Issue Detected', issue);
+        if (now - this.metrics.lastAlertTime > 3600000 && emailService.isConfigured) { // 1 hour
+            emailService.sendAlert('System Issue Detected', issue)
+                .catch(error => {
+                    console.error('Failed to send alert email:', error);
+                });
             this.metrics.lastAlertTime = now;
             this.saveMetrics();
         }
@@ -69,13 +73,23 @@ class MetricsService {
             errorRate: this.metrics.totalRequests > 0 
                 ? ((this.metrics.errorCount / this.metrics.totalRequests) * 100).toFixed(2)
                 : '0.00',
-            recentIssues: this.metrics.recentIssues
+            recentIssues: this.metrics.recentIssues,
+            emailAlertsEnabled: emailService.isConfigured
         };
     }
 
     async sendDailyReport() {
-        const metrics = this.getMetrics();
-        await emailService.sendDailyReport(metrics);
+        if (!emailService.isConfigured) {
+            console.warn('Cannot send daily report: Email service not configured');
+            return;
+        }
+
+        try {
+            const metrics = this.getMetrics();
+            await emailService.sendDailyReport(metrics);
+        } catch (error) {
+            console.error('Failed to send daily report:', error);
+        }
     }
 }
 
