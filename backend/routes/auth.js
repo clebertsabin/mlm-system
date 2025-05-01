@@ -2,9 +2,17 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { auth, requireRole } = require('../middleware/auth');
+const rateLimit = require('express-rate-limit');
+
+// Rate limiting for auth routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5 // limit each IP to 5 requests per windowMs
+});
 
 // Login route
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -20,7 +28,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -41,10 +49,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Signup route
-router.post('/signup', async (req, res) => {
+// Signup route (only admin can create new users)
+router.post('/signup', auth, requireRole(['admin']), async (req, res) => {
   try {
     const { email, password, firstName, lastName, department, role } = req.body;
+
+    // Validate role
+    if (!['hod', 'lecturer', 'finance', 'user'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role specified' });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -57,19 +70,13 @@ router.post('/signup', async (req, res) => {
       firstName,
       lastName,
       department,
-      role: role || 'user'
+      role
     });
 
     await user.save();
 
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
-    );
-
     res.status(201).json({
-      token,
+      message: 'User created successfully',
       user: {
         id: user._id,
         email: user.email,
@@ -86,7 +93,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // Forgot password route
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', authLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -95,12 +102,19 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // In a real application, you would:
-    // 1. Generate a password reset token
-    // 2. Save it to the user document
-    // 3. Send an email with the reset link
-    // For now, we'll just return a success message
-    res.json({ message: 'Password reset instructions sent to your email' });
+    // Generate reset token
+    const resetToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // TODO: Send email with reset link
+    // For now, we'll just return the token (in production, this should be sent via email)
+    res.json({ 
+      message: 'Password reset instructions sent to your email',
+      resetToken // Remove this in production
+    });
   } catch (error) {
     console.error('Forgot password error:', error);
     res.status(500).json({ message: 'Server error' });

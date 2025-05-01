@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'hod', 'finance', 'user'],
+    enum: ['admin', 'hod', 'lecturer', 'finance', 'user'],
     default: 'user'
   },
   firstName: {
@@ -28,7 +28,8 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    required: true
+    required: true,
+    enum: ['Computer Science', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Engineering', 'Business', 'Humanities']
   },
   profilePicture: {
     type: String

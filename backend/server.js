@@ -7,6 +7,13 @@ const path = require('path');
 // Load environment variables
 dotenv.config();
 
+// Import routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users');
+const leaveRoutes = require('./routes/leave');
+const profileRoutes = require('./routes/profile');
+const lecturerRoutes = require('./routes/lecturers');
+
 const app = express();
 
 // Middleware
@@ -17,15 +24,20 @@ app.use(cors({
 app.use(express.json());
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mlms')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mlms', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/leave', require('./routes/leave'));
-app.use('/api/profile', require('./routes/profile'));
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/leave', leaveRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/lecturers', lecturerRoutes);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
