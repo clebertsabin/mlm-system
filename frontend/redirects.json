@@ -1,0 +1,12 @@
+[
+  {
+    "source": "/",
+    "destination": "/loginmlms.html",
+    "permanent": true
+  },
+  {
+    "source": "/login",
+    "destination": "/loginmlms.html",
+    "permanent": true
+  }
+] 

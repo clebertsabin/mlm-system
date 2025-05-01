@@ -12,6 +12,15 @@ services:
         - frontend/
         - package.json
         - package-lock.json
+    routes:
+      - type: redirect
+        source: /
+        destination: /loginmlms.html
+        permanent: true
+      - type: redirect
+        source: /login
+        destination: /loginmlms.html
+        permanent: true
 
   - type: web
     name: mlms-backend
@@ -48,6 +57,8 @@ services:
         - backend/
         - package.json
         - package-lock.json
+    healthCheckPath: /health
+    healthCheckTimeout: 5s
 
   - type: cron
     name: mlms-cleanup
@@ -75,4 +86,14 @@ services:
       - key: EMAIL_PASSWORD
         sync: false
       - key: ADMIN_EMAIL
-        sync: false 
+        sync: false
+
+  - type: cron
+    name: mlms-verify
+    schedule: "*/5 * * * *"
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node scripts/verifyLoginPage.js
+    envVars:
+      - key: NODE_ENV
+        value: production 
