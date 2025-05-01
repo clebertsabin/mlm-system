@@ -121,4 +121,56 @@ router.post('/forgot-password', authLimiter, async (req, res) => {
   }
 });
 
+// Test authentication endpoint
+router.get('/test', auth, (req, res) => {
+    res.json({
+        message: 'Authentication successful',
+        user: {
+            id: req.user._id,
+            role: req.user.role,
+            email: req.user.email
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Test role-based access
+router.get('/test/admin', auth, requireRole(['admin']), (req, res) => {
+    res.json({
+        message: 'Admin access granted',
+        user: {
+            id: req.user._id,
+            role: req.user.role,
+            email: req.user.email
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Test lecturer access
+router.get('/test/lecturer', auth, requireRole(['lecturer']), (req, res) => {
+    res.json({
+        message: 'Lecturer access granted',
+        user: {
+            id: req.user._id,
+            role: req.user.role,
+            email: req.user.email
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Test student access
+router.get('/test/student', auth, requireRole(['student']), (req, res) => {
+    res.json({
+        message: 'Student access granted',
+        user: {
+            id: req.user._id,
+            role: req.user.role,
+            email: req.user.email
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
 module.exports = router; 
