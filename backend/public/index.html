@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLMS Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .healthy {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .unhealthy {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MLMS Backend Service</h1>
+        <p>This is the backend service for the MLMS (Learning Management System).</p>
+        <div id="status" class="status">
+            Checking system status...
+        </div>
+    </div>
+    <script>
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                const statusDiv = document.getElementById('status');
+                if (data.message === 'OK') {
+                    statusDiv.className = 'status healthy';
+                    statusDiv.innerHTML = `
+                        <h3>System Status: Healthy</h3>
+                        <p>Uptime: ${Math.floor(data.uptime)} seconds</p>
+                        <p>Version: ${data.version}</p>
+                        <p>Database: ${data.services.database}</p>
+                    `;
+                } else {
+                    statusDiv.className = 'status unhealthy';
+                    statusDiv.textContent = 'System Status: Unhealthy';
+                }
+            })
+            .catch(error => {
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status unhealthy';
+                statusDiv.textContent = 'Error checking system status';
+            });
+    </script>
+</body>
+</html> 

@@ -24,14 +24,31 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mlms', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI;
+    if (!mongoURI) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
+    
+    if (!mongoURI.startsWith('mongodb://') && !mongoURI.startsWith('mongodb+srv://')) {
+      throw new Error('Invalid MongoDB URI format. Must start with mongodb:// or mongodb+srv://');
+    }
+
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
+};
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -48,18 +65,10 @@ app.get('/health', (req, res) => {
     timestamp: Date.now(),
     version: '1.1.0',
     services: {
-      database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-      uploads: fs.existsSync(process.env.UPLOAD_DIR || '/tmp/uploads') ? 'available' : 'unavailable',
-      pdfs: fs.existsSync(process.env.PDF_DIR || '/tmp/pdfs') ? 'available' : 'unavailable'
-    },
-    metrics: metricsService.getMetrics()
+      database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    }
   };
-  try {
-    res.send(healthcheck);
-  } catch (error) {
-    healthcheck.message = error;
-    res.status(503).send();
-  }
+  res.json(healthcheck);
 });
 
 // Logs endpoint
@@ -108,7 +117,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Start server
+const PORT = process.env.PORT || 3000;
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 }); 
