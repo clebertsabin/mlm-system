@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
@@ -38,6 +39,27 @@ app.use('/api/users', userRoutes);
 app.use('/api/leave', leaveRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/lecturers', lecturerRoutes);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    message: 'OK',
+    timestamp: Date.now(),
+    version: '1.1.0',
+    services: {
+      database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+      uploads: fs.existsSync(process.env.UPLOAD_DIR || '/tmp/uploads') ? 'available' : 'unavailable',
+      pdfs: fs.existsSync(process.env.PDF_DIR || '/tmp/pdfs') ? 'available' : 'unavailable'
+    }
+  };
+  try {
+    res.send(healthcheck);
+  } catch (error) {
+    healthcheck.message = error;
+    res.status(503).send();
+  }
+});
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
