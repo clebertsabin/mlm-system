@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitoring - MLMS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="css/monitoring.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>MLMS</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="admindashboard.html">Dashboard</a></li>
+                    <li><a href="leave page.html">Leave</a></li>
+                    <li><a href="mission page.html">Mission</a></li>
+                    <li><a href="monitoring.html" class="active">Monitoring</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="userName">Admin</span>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="monitoring-container">
+                <h2>System Monitoring Dashboard</h2>
+                
+                <!-- Service Status Cards -->
+                <div class="status-cards">
+                    <div class="status-card" id="backendStatus">
+                        <div class="card-header">
+                            <h3>Backend Service</h3>
+                            <span class="status-indicator" id="backendIndicator"></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric">
+                                <span class="label">Database</span>
+                                <span class="value" id="dbStatus">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Uploads</span>
+                                <span class="value" id="uploadStatus">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">PDFs</span>
+                                <span class="value" id="pdfStatus">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Uptime</span>
+                                <span class="value" id="uptime">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Total Requests</span>
+                                <span class="value" id="totalRequests">0</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Error Rate</span>
+                                <span class="value" id="errorRate">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-card" id="frontendStatus">
+                        <div class="card-header">
+                            <h3>Frontend Service</h3>
+                            <span class="status-indicator" id="frontendIndicator"></span>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric">
+                                <span class="label">Status</span>
+                                <span class="value" id="frontendValue">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Last Check</span>
+                                <span class="value" id="lastCheck">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Page Load Time</span>
+                                <span class="value" id="pageLoadTime">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-card" id="performanceCard">
+                        <div class="card-header">
+                            <h3>Performance Metrics</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Issues Section -->
+                <div class="issues-section">
+                    <h3>Recent Issues</h3>
+                    <div class="issues-container" id="issuesContent">
+                        <!-- Issues will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Logs Section -->
+                <div class="logs-section">
+                    <h3>System Logs</h3>
+                    <div class="logs-container">
+                        <div class="logs-header">
+                            <div class="search-box">
+                                <input type="text" id="logSearch" placeholder="Search logs...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="log-filters">
+                                <select id="logLevel">
+                                    <option value="all">All Levels</option>
+                                    <option value="info">Info</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="logs-content" id="logsContent">
+                            <!-- Logs will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 MLMS. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/monitoring.js"></script>
+</body>
+</html> 

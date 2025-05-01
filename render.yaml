@@ -11,10 +11,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: API_URL
+        value: https://mlms-backend.onrender.com
     buildFilter:
       paths:
       - frontend/**/*
       - frontend/package.json
+    healthCheckPath: /index.html
 
   - type: web
     name: mlms-backend
@@ -33,8 +36,62 @@ services:
         value: 8080
       - key: CORS_ORIGIN
         value: https://mlms-frontend.onrender.com
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: PDF_DIR
+        value: /tmp/pdfs
+      - key: MAX_FILE_SIZE
+        value: 5242880
+      - key: ALLOWED_FILE_TYPES
+        value: "image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      - key: EMAIL_USER
+        value: clebertsabin@gmail.com
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        value: clebertsabin@gmail.com
     buildFilter:
       paths:
       - backend/package.json
       - backend/package-lock.json
-      - "backend/**/*.js" 
+      - "backend/**/*.js"
+      - backend/middleware/**
+      - backend/models/**
+      - backend/routes/**
+      - backend/utils/**
+    healthCheckPath: /health
+    healthCheckTimeout: 5s
+
+  - type: cron
+    name: mlms-cleanup
+    env: node
+    rootDir: backend
+    schedule: "0 0 * * *"
+    buildCommand: npm install
+    startCommand: node scripts/cleanup.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: UPLOAD_DIR
+        value: /tmp/uploads
+      - key: PDF_DIR
+        value: /tmp/pdfs
+      - key: MAX_FILE_AGE
+        value: 86400
+
+  - type: cron
+    name: mlms-daily-report
+    env: node
+    rootDir: backend
+    schedule: "0 0 * * *"
+    buildCommand: npm install
+    startCommand: node scripts/dailyReport.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: EMAIL_USER
+        value: clebertsabin@gmail.com
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        value: clebertsabin@gmail.com 
